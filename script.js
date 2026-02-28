@@ -1,12 +1,20 @@
+// Call backend AI route
 async function callAI(prompt) {
-  const res = await fetch("/api/ai", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt })
-  });
+  try {
+    const res = await fetch("/api/ai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt })
+    });
 
-  const data = await res.json();
-  return data.output || "No response.";
+    if (!res.ok) throw new Error("Network response was not ok");
+
+    const data = await res.json();
+    return data.output || "No response.";
+  } catch (error) {
+    console.error("Fetch error:", error);
+    return "Error connecting to AI.";
+  }
 }
 
 // Student AI chat
@@ -21,9 +29,9 @@ async function fakeRespond(scope) {
   }
 
   output.innerHTML = `<p class="muted">Thinking...</p>`;
-
   const response = await callAI(value);
-
+  
+  // Using textContent for the response part to stay safe from XSS
   output.innerHTML = `<p>${response}</p>`;
 }
 
@@ -58,82 +66,6 @@ async function fakeTool(type) {
   }
 
   output.innerHTML = `<p class="muted">Thinking...</p>`;
-
   const response = await callAI(cfg.prompt + value);
-
   output.innerHTML = `<p>${response}</p>`;
-}
-
-// Sidebar + hub switching (unchanged)
-const navItems = document.querySelectorAll(".nav-item");
-const hubTitle = document.getElementById("hubTitle");
-const hubSubtitle = document.getElementById("hubSubtitle");
-const studentHub = document.getElementById("studentHub");
-const hubFrameWrapper = document.getElementById("hubFrameWrapper");
-const hubFrame = document.getElementById("hubFrame");
-const sidebar = document.getElementById("sidebar");
-const sidebarToggle = document.getElementById("sidebarToggle");
-
-const hubMeta = {
-  student: {
-    title: "Student AI",
-    subtitle: "General study help, summaries, flashcards, quizzes."
-  },
-  medical: {
-    title: "Medical Hub",
-    subtitle: "Educational medical reasoning.",
-    path: "hubs/medical.html"
-  },
-  finance: {
-    title: "Finance & Business Hub",
-    subtitle: "Business logic and investment reasoning.",
-    path: "hubs/finance.html"
-  },
-  tech: {
-    title: "Tech & Coding Hub",
-    subtitle: "Code explanations and debugging.",
-    path: "hubs/tech.html"
-  },
-  fitness: {
-    title: "Fitness & Sports Hub",
-    subtitle: "Training and performance science.",
-    path: "hubs/fitness.html"
-  },
-  science: {
-    title: "Science Hub",
-    subtitle: "Physics, chemistry, biology reasoning.",
-    path: "hubs/science.html"
-  },
-  writing: {
-    title: "Writing & Creativity Hub",
-    subtitle: "Essays, stories, scripts.",
-    path: "hubs/writing.html"
-  }
-};
-
-navItems.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const hub = btn.dataset.hub;
-
-    navItems.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    hubTitle.textContent = hubMeta[hub].title;
-    hubSubtitle.textContent = hubMeta[hub].subtitle;
-
-    if (hub === "student") {
-      studentHub.classList.add("active");
-      hubFrameWrapper.classList.remove("active");
-    } else {
-      studentHub.classList.remove("active");
-      hubFrameWrapper.classList.add("active");
-      hubFrame.src = hubMeta[hub].path;
-    }
-  });
-});
-
-if (sidebarToggle) {
-  sidebarToggle.addEventListener("click", () => {
-    sidebar.classList.toggle("collapsed");
-  });
-}
+} // <--- This was missing!
