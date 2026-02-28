@@ -4,18 +4,119 @@
   <meta charset="UTF-8" />
   <title>Finance & Business Hub</title>
   <style>
-    body { font-family: system-ui, sans-serif; margin: 0; padding: 1rem; background: #f9fafb; }
-    .panel { background: #fff; border-radius: 0.75rem; padding: 1rem; border: 1px solid #e5e7eb; }
-    h2 { margin-bottom: 0.25rem; }
-    p { color: #6b7280; font-size: 0.9rem; margin-bottom: 0.75rem; }
-    textarea { width: 100%; min-height: 120px; border-radius: 0.5rem; border: 1px solid #e5e7eb; padding: 0.6rem; font-size: 0.9rem; }
+    /* Match the main app styling */
+    :root {
+      --accent: #2563eb;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --panel-border: #e5e7eb;
+    }
+
+    body { 
+      font-family: system-ui, -apple-system, sans-serif; 
+      margin: 0; 
+      padding: 1.5rem; 
+      background: #f5f7fb; 
+      color: var(--text-main);
+    }
+
+    .panel { 
+      background: #fff; 
+      border-radius: 0.75rem; 
+      padding: 1.5rem; 
+      border: 1px solid var(--panel-border); 
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 { margin: 0 0 0.25rem 0; font-size: 1.25rem; }
+    p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; }
+
+    textarea { 
+      width: 100%; 
+      min-height: 120px; 
+      border-radius: 0.5rem; 
+      border: 1px solid var(--panel-border); 
+      padding: 0.8rem; 
+      font-size: 0.95rem; 
+      box-sizing: border-box;
+      font-family: inherit;
+      resize: vertical;
+    }
+
+    .btn-container { margin-top: 1rem; }
+
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .output {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f9fafb;
+      border-radius: 0.5rem;
+      border: 1px solid var(--panel-border);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      display: none; /* Hidden until AI responds */
+      white-space: pre-wrap;
+    }
+
+    .loading { color: var(--accent); font-weight: 600; display: none; margin-top: 1rem; }
   </style>
 </head>
 <body>
   <div class="panel">
-    <h2>Finance & Business Hub</h2>
-    <p>Think through deals, cashflow, business models, and investment logic here.</p>
-    <textarea placeholder="Describe a business idea, deal, or investment scenario..."></textarea>
+    <h2>💼 Finance & Business Analysis</h2>
+    <p>Analyze business models, calculate ROIs, or draft investment pitches.</p>
+    
+    <textarea id="financeInput" placeholder="e.g., 'Analyze the unit economics of a subscription coffee brand...'"></textarea>
+    
+    <div class="btn-container">
+      <button id="analyzeBtn" onclick="analyzeFinance()">Run Analysis</button>
+    </div>
+
+    <div id="loadingStatus" class="loading">Analyzing market data...</div>
+    <div id="financeOutput" class="output"></div>
   </div>
+
+  <script>
+    async function analyzeFinance() {
+      const input = document.getElementById('financeInput');
+      const output = document.getElementById('financeOutput');
+      const btn = document.getElementById('analyzeBtn');
+      const loader = document.getElementById('loadingStatus');
+
+      if (!input.value.trim()) return;
+
+      // UI Feedback
+      btn.disabled = true;
+      loader.style.display = 'block';
+      output.style.display = 'none';
+
+      try {
+        // We use window.parent to access the callAI function in your main script.js
+        const prompt = "Act as a Senior Financial Analyst. Analyze this business scenario:\n\n" + input.value;
+        const response = await window.parent.callAI(prompt);
+
+        output.textContent = response;
+        output.style.display = 'block';
+      } catch (err) {
+        output.textContent = "Error: Could not connect to the AI engine.";
+        output.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        loader.style.display = 'none';
+      }
+    }
+  </script>
 </body>
 </html>
