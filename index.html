@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nover Education – Multi‑Hub AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-logo">N</span>
+        <div class="brand-text">
+          <h1>Nover Education</h1>
+          <p>Multi‑Hub AI Platform</p>
+        </div>
+      </div>
+
+      <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+
+      <nav class="nav">
+        <p class="nav-label">Core</p>
+        <button class="nav-item active" data-hub="student">
+          🧠 Student AI
+        </button>
+
+        <p class="nav-label">Hubs</p>
+        <button class="nav-item" data-hub="medical">⚕️ Medical Hub</button>
+        <button class="nav-item" data-hub="finance">💼 Finance & Business</button>
+        <button class="nav-item" data-hub="tech">💻 Tech & Coding</button>
+        <button class="nav-item" data-hub="fitness">🏃 Fitness & Sports</button>
+        <button class="nav-item" data-hub="science">🔬 Science Hub</button>
+        <button class="nav-item" data-hub="writing">✍️ Writing & Creativity</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p class="footer-title">Mode</p>
+        <p class="footer-text">Light • Collapsible Sidebar</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <h2 id="hubTitle">Student AI</h2>
+        <p id="hubSubtitle">General study help, summaries, flashcards, quizzes.</p>
+      </header>
+
+      <section class="content">
+        <section id="studentHub" class="hub-section active">
+          <div class="panel">
+            <h3>Student AI Chat</h3>
+            <p>Ask questions, get explanations, and break down any topic.</p>
+            <textarea id="studentInput" placeholder="Ask a question or paste your notes..."></textarea>
+            <button class="primary-btn" onclick="fakeRespond('student')">Ask AI</button>
+            <div class="output" id="studentOutput">
+              <p class="muted">Your AI responses will appear here.</p>
+            </div>
+          </div>
+
+          <div class="panel-grid">
+            <div class="panel">
+              <h3>Summariser</h3>
+              <textarea id="summaryInput" placeholder="Paste text to summarise..."></textarea>
+              <button onclick="fakeTool('summary')">Summarise</button>
+              <div class="output" id="summaryOutput"></div>
+            </div>
+
+            <div class="panel">
+              <h3>Flashcards</h3>
+              <textarea id="flashcardInput" placeholder="Paste key points or a topic..."></textarea>
+              <button onclick="fakeTool('flashcards')">Generate Flashcards</button>
+              <div class="output" id="flashcardOutput"></div>
+            </div>
+
+            <div class="panel">
+              <h3>Quiz Generator</h3>
+              <textarea id="quizInput" placeholder="Paste notes or a topic for quiz questions..."></textarea>
+              <button onclick="fakeTool('quiz')">Create Quiz</button>
+              <div class="output" id="quizOutput"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="hubFrameWrapper" class="hub-section">
+          <iframe id="hubFrame" title="Hub content"></iframe>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
