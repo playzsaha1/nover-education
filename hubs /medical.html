@@ -79,3 +79,48 @@
     <p>Break down pathophysiology, differential diagnoses (DDx), and OSCE logic.</p>
     
     <textarea id="medInput" placeholder="e.g., 'A 45-year-old male presents with sudden onset pleuritic chest pain and dyspnea. Provide a list of differentials and the physiological mechanism of each...'"></textarea>
+    
+    <div class="btn-container">
+      <button id="medBtn" onclick="runMedicalAI()">Consult AI Educator</button>
+    </div>
+
+    <div id="loadingStatus" class="status">Reviewing clinical literature...</div>
+    <div id="medOutput" class="output"></div>
+  </div>
+
+  <script>
+    async function runMedicalAI() {
+      const input = document.getElementById('medInput');
+      const output = document.getElementById('medOutput');
+      const btn = document.getElementById('medBtn');
+      const status = document.getElementById('loadingStatus');
+
+      if (!input.value.trim()) return;
+
+      btn.disabled = true;
+      status.style.display = 'block';
+      output.style.display = 'none';
+
+      try {
+        // System Prompt: Focuses AI on clinical reasoning and education
+        const medPrompt = "Act as a Senior Clinical Educator. " +
+                          "Analyze the following medical query using evidence-based reasoning. " +
+                          "Structure your response with clear headings (e.g., Mechanism, Differentials, Next Steps):\n\n" + 
+                          input.value;
+        
+        // Connect to the parent app's AI function
+        const response = await window.parent.callAI(medPrompt);
+
+        output.textContent = response;
+        output.style.display = 'block';
+      } catch (err) {
+        output.textContent = "Clinical Error: Unable to reach AI database.";
+        output.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        status.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
