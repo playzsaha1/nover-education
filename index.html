@@ -1,57 +1,125 @@
-<script>
-    // 1. Sidebar Toggle Logic
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nover Education – Multi‑Hub AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-logo">N</span>
+        <div class="brand-text">
+          <h1>Nover Education</h1>
+          <p>Multi‑Hub AI Platform</p>
+        </div>
+      </div>
+
+      <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+
+      <nav class="nav">
+        <p class="nav-label">Core</p>
+        <button class="nav-item active" data-hub="student" onclick="switchHub('student')">
+          🧠 Student AI
+        </button>
+
+        <p class="nav-label">Hubs</p>
+        <button class="nav-item" data-hub="medical" onclick="switchHub('medical')">⚕️ Medical Hub</button>
+        <button class="nav-item" data-hub="finance" onclick="switchHub('finance')">💼 Finance Hub</button>
+        <button class="nav-item" data-hub="tech" onclick="switchHub('tech')">💻 Tech Hub</button>
+        <button class="nav-item" data-hub="fitness" onclick="switchHub('fitness')">🏃 Fitness Hub</button>
+        <button class="nav-item" data-hub="science" onclick="switchHub('science')">🔬 Science Hub</button>
+        <button class="nav-item" data-hub="writing" onclick="switchHub('writing')">✍️ Writing Hub</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p class="footer-title">Mode</p>
+        <p class="footer-text">Light • Active</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <h2 id="hubTitle">Student AI</h2>
+        <p id="hubSubtitle">General study help, summaries, flashcards, quizzes.</p>
+      </header>
+
+      <section class="content">
+        <section id="studentHub" class="hub-section active">
+          <div class="panel">
+            <h3>Student AI Chat</h3>
+            <textarea id="studentInput" placeholder="Ask a question or paste your notes..."></textarea>
+            <button class="primary-btn" onclick="fakeRespond('student')">Ask AI</button>
+            <div class="output" id="studentOutput">
+              <p class="muted">Your AI responses will appear here.</p>
+            </div>
+          </div>
+
+          <div class="panel-grid">
+            <div class="panel">
+              <h3>Summariser</h3>
+              <textarea id="summaryInput" placeholder="Paste text..."></textarea>
+              <button class="primary-btn" onclick="fakeTool('summary')">Summarise</button>
+              <div class="output" id="summaryOutput"></div>
+            </div>
+
+            <div class="panel">
+              <h3>Flashcards</h3>
+              <textarea id="flashcardInput" placeholder="Paste content..."></textarea>
+              <button class="primary-btn" onclick="fakeTool('flashcards')">Generate</button>
+              <div class="output" id="flashcardOutput"></div>
+            </div>
+
+            <div class="panel">
+              <h3>Quiz Generator</h3>
+              <textarea id="quizInput" placeholder="Paste notes..."></textarea>
+              <button class="primary-btn" onclick="fakeTool('quiz')">Create Quiz</button>
+              <div class="output" id="quizOutput"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="hubFrameWrapper" class="hub-section">
+          <div id="frameLoading" style="display:none;">Loading Hub...</div>
+          <iframe id="hubFrame" title="Hub content" src="about:blank"></iframe>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+  
+  <script>
     function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('collapsed');
+      document.getElementById('sidebar').classList.toggle('collapsed');
     }
 
-    // 2. Hub Switching Logic
-    // We now pass 'e' (the event) to ensure cross-browser compatibility
-    function switchHub(hubType, e) {
-      // Prevent error if event is missing
-      const target = e ? e.currentTarget : null;
-      
-      // Update Active Button UI
+    function switchHub(hubType) {
+      // 1. Update Active Button UI
       document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-      if (target) target.classList.add('active');
+      event.currentTarget.classList.add('active');
 
       const studentHub = document.getElementById('studentHub');
       const frameWrapper = document.getElementById('hubFrameWrapper');
       const frame = document.getElementById('hubFrame');
       const title = document.getElementById('hubTitle');
-      const subtitle = document.getElementById('hubSubtitle');
-
-      // Auto-close sidebar on mobile after selection
-      if (window.innerWidth < 900) {
-        document.getElementById('sidebar').classList.add('collapsed');
-      }
 
       if (hubType === 'student') {
         studentHub.classList.add('active');
         frameWrapper.classList.remove('active');
         title.innerText = "Student AI";
-        subtitle.innerText = "General study help, summaries, flashcards, quizzes.";
       } else {
         studentHub.classList.remove('active');
         frameWrapper.classList.add('active');
+        title.innerText = hubType.charAt(0).toUpperCase() + hubType.slice(1) + " Hub";
         
-        // Dynamic Title and Subtitle update
-        const formattedTitle = hubType.charAt(0).toUpperCase() + hubType.slice(1);
-        title.innerText = `${formattedTitle} Hub`;
-        subtitle.innerText = `Specialised AI tools for ${hubType} reasoning and research.`;
-        
-        // Set the frame source
-        frame.src = `hubs/${hubType}.html`; 
+        // 2. Load external content (Example URLs)
+        // You can change these to your specific internal pages
+        frame.src = `/hubs/${hubType}.html`; 
       }
     }
-
-    // 3. Initialize: Attach listeners to all nav items properly
-    document.querySelectorAll('.nav-item').forEach(item => {
-      item.addEventListener('click', (e) => {
-        const hub = item.getAttribute('data-hub');
-        switchHub(hub, e);
-      });
-    });
   </script>
 </body>
 </html>
