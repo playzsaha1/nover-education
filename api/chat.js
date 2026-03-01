@@ -4,41 +4,37 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message } = req.body;
+    const { message } = req.body || {};
 
     if (!message || !message.trim()) {
       return res.status(400).json({ error: "Message is empty" });
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
-
     if (!apiKey) {
       return res.status(500).json({ error: "Missing GEMINI_API_KEY env var" });
     }
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: message }],
-            },
-          ],
-        }),
-      }
-    );
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: message }],
+          },
+        ],
+      }),
+    });
 
     const data = await response.json();
 
     if (!response.ok) {
       return res.status(500).json({
-        error: data.error?.message || "Gemini API error",
+        error: data?.error?.message || "Gemini API error",
       });
     }
 
