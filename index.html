@@ -17,26 +17,26 @@
         </div>
       </div>
 
-      <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+      <button class="sidebar-toggle" id="sidebarToggle">☰</button>
 
       <nav class="nav">
         <p class="nav-label">Core</p>
-        <button class="nav-item active" data-hub="student" onclick="switchHub('student')">
+        <button class="nav-item active" data-hub="student">
           🧠 Student AI
         </button>
 
         <p class="nav-label">Hubs</p>
-        <button class="nav-item" data-hub="medical" onclick="switchHub('medical')">⚕️ Medical Hub</button>
-        <button class="nav-item" data-hub="finance" onclick="switchHub('finance')">💼 Finance Hub</button>
-        <button class="nav-item" data-hub="tech" onclick="switchHub('tech')">💻 Tech Hub</button>
-        <button class="nav-item" data-hub="fitness" onclick="switchHub('fitness')">🏃 Fitness Hub</button>
-        <button class="nav-item" data-hub="science" onclick="switchHub('science')">🔬 Science Hub</button>
-        <button class="nav-item" data-hub="writing" onclick="switchHub('writing')">✍️ Writing Hub</button>
+        <button class="nav-item" data-hub="medical">⚕️ Medical Hub</button>
+        <button class="nav-item" data-hub="finance">💼 Finance & Business</button>
+        <button class="nav-item" data-hub="tech">💻 Tech & Coding</button>
+        <button class="nav-item" data-hub="fitness">🏃 Fitness & Sports</button>
+        <button class="nav-item" data-hub="science">🔬 Science Hub</button>
+        <button class="nav-item" data-hub="writing">✍️ Writing & Creativity</button>
       </nav>
 
       <div class="sidebar-footer">
         <p class="footer-title">Mode</p>
-        <p class="footer-text">Light • Active</p>
+        <p class="footer-text">Light • Collapsible Sidebar</p>
       </div>
     </aside>
 
@@ -50,6 +50,7 @@
         <section id="studentHub" class="hub-section active">
           <div class="panel">
             <h3>Student AI Chat</h3>
+            <p>Ask questions, get explanations, and break down any topic.</p>
             <textarea id="studentInput" placeholder="Ask a question or paste your notes..."></textarea>
             <button class="primary-btn" onclick="fakeRespond('student')">Ask AI</button>
             <div class="output" id="studentOutput">
@@ -60,66 +61,34 @@
           <div class="panel-grid">
             <div class="panel">
               <h3>Summariser</h3>
-              <textarea id="summaryInput" placeholder="Paste text..."></textarea>
-              <button class="primary-btn" onclick="fakeTool('summary')">Summarise</button>
+              <textarea id="summaryInput" placeholder="Paste text to summarise..."></textarea>
+              <button onclick="fakeTool('summary')">Summarise</button>
               <div class="output" id="summaryOutput"></div>
             </div>
 
             <div class="panel">
               <h3>Flashcards</h3>
-              <textarea id="flashcardInput" placeholder="Paste content..."></textarea>
-              <button class="primary-btn" onclick="fakeTool('flashcards')">Generate</button>
+              <textarea id="flashcardInput" placeholder="Paste key points or a topic..."></textarea>
+              <button onclick="fakeTool('flashcards')">Generate Flashcards</button>
               <div class="output" id="flashcardOutput"></div>
             </div>
 
             <div class="panel">
               <h3>Quiz Generator</h3>
-              <textarea id="quizInput" placeholder="Paste notes..."></textarea>
-              <button class="primary-btn" onclick="fakeTool('quiz')">Create Quiz</button>
+              <textarea id="quizInput" placeholder="Paste notes or a topic for quiz questions..."></textarea>
+              <button onclick="fakeTool('quiz')">Create Quiz</button>
               <div class="output" id="quizOutput"></div>
             </div>
           </div>
         </section>
 
         <section id="hubFrameWrapper" class="hub-section">
-          <div id="frameLoading" style="display:none;">Loading Hub...</div>
-          <iframe id="hubFrame" title="Hub content" src="about:blank"></iframe>
+          <iframe id="hubFrame" title="Hub content"></iframe>
         </section>
       </section>
     </main>
   </div>
 
   <script src="script.js"></script>
-  
-  <script>
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('collapsed');
-    }
-
-    function switchHub(hubType) {
-      // 1. Update Active Button UI
-      document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-      event.currentTarget.classList.add('active');
-
-      const studentHub = document.getElementById('studentHub');
-      const frameWrapper = document.getElementById('hubFrameWrapper');
-      const frame = document.getElementById('hubFrame');
-      const title = document.getElementById('hubTitle');
-
-      if (hubType === 'student') {
-        studentHub.classList.add('active');
-        frameWrapper.classList.remove('active');
-        title.innerText = "Student AI";
-      } else {
-        studentHub.classList.remove('active');
-        frameWrapper.classList.add('active');
-        title.innerText = hubType.charAt(0).toUpperCase() + hubType.slice(1) + " Hub";
-        
-        // 2. Load external content (Example URLs)
-        // You can change these to your specific internal pages
-        frame.src = `/hubs/${hubType}.html`; 
-      }
-    }
-  </script>
 </body>
 </html>
