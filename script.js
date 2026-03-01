@@ -1,3 +1,4 @@
+// ===== NAV / HUB SWITCHING (unchanged) =====
 const navItems = document.querySelectorAll(".nav-item");
 const hubTitle = document.getElementById("hubTitle");
 const hubSubtitle = document.getElementById("hubSubtitle");
@@ -14,12 +15,12 @@ const hubMeta = {
   },
   medical: {
     title: "Medical Hub",
-    subtitle: "Conditions, mechanisms, differentials, and exam‑style explanations.",
+    subtitle: "Conditions, mechanisms, differentials, and exam-style explanations.",
     path: "hubs/medical.html",
   },
   finance: {
     title: "Finance & Business Hub",
-    subtitle: "Investing, business models, cashflow, and case‑style breakdowns.",
+    subtitle: "Investing, business models, cashflow, and case-style breakdowns.",
     path: "hubs/finance.html",
   },
   tech: {
@@ -71,66 +72,158 @@ if (sidebarToggle) {
   });
 }
 
-// Fake tools for now – just to show behaviour
+// ===== REAL AI WIRING (NEW) =====
 
-function fakeRespond(scope) {
-  const input = document.getElementById(`${scope}Input`);
-  const output = document.getElementById(`${scope}Output`);
+// Calls your Vercel serverless function at /api/chat
+async function callAI(message) {
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message }),
+  });
 
-  const value = input.value.trim();
-  if (!value) {
-    output.innerHTML = `<p class="muted">Type something first so the AI has context.</p>`;
-    return;
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Request failed");
+
+  return data.text || "No response";
+}
+
+function setOutput(el, html) {
+  if (!el) return;
+  el.innerHTML = html;
+}
+
+function setText(el, text) {
+  if (!el) return;
+  el.textContent = text;
+}
+
+function setupStudentAI() {
+  // MAIN STUDENT CHAT
+  const studentBtn = document.getElementById("studentAskBtn");
+  const studentInput = document.getElementById("studentInput");
+  const studentOutput = document.getElementById("studentOutput");
+
+  if (studentBtn && studentInput && studentOutput) {
+    studentBtn.addEventListener("click", async () => {
+      const userText = studentInput.value.trim();
+      if (!userText) {
+        setOutput(studentOutput, `<p class="muted">Type something first so the AI has context.</p>`);
+        return;
+      }
+
+      setOutput(studentOutput, `<p class="muted">thinking...</p>`);
+
+      try {
+        const reply = await callAI(
+          `You are a helpful student tutor. Explain clearly, step-by-step, and keep it friendly.
+If the question is vague, ask 1 short clarifying question, then still give your best guess.
+
+Student question:
+${userText}`
+        );
+        setText(studentOutput, reply);
+      } catch (e) {
+        setOutput(studentOutput, `<p class="muted">Error: ${e.message}</p>`);
+      }
+    });
   }
 
-  output.innerHTML = `
-    <p><strong>Simulated AI response:</strong></p>
-    <p class="muted">In the real version, this would call your backend or an AI API.</p>
-    <p>You asked:</p>
-    <p>${escapeHtml(value)}</p>
-  `;
-}
+  // SUMMARISER
+  const summaryBtn = document.getElementById("summaryBtn");
+  const summaryInput = document.getElementById("summaryInput");
+  const summaryOutput = document.getElementById("summaryOutput");
 
-function fakeTool(type) {
-  const map = {
-    summary: {
-      in: "summaryInput",
-      out: "summaryOutput",
-      label: "Summary",
-    },
-    flashcards: {
-      in: "flashcardInput",
-      out: "flashcardOutput",
-      label: "Flashcards",
-    },
-    quiz: {
-      in: "quizInput",
-      out: "quizOutput",
-      label: "Quiz",
-    },
-  };
+  if (summaryBtn && summaryInput && summaryOutput) {
+    summaryBtn.addEventListener("click", async () => {
+      const text = summaryInput.value.trim();
+      if (!text) {
+        setOutput(summaryOutput, `<p class="muted">Paste some content first.</p>`);
+        return;
+      }
 
-  const cfg = map[type];
-  const input = document.getElementById(cfg.in);
-  const output = document.getElementById(cfg.out);
+      setOutput(summaryOutput, `<p class="muted">summarising...</p>`);
 
-  const value = input.value.trim();
-  if (!value) {
-    output.innerHTML = `<p class="muted">Paste some content first.</p>`;
-    return;
+      try {
+        const reply = await callAI(
+          `Summarise this for a student.
+Return:
+1) 6 dot points max
+2) a 1-sentence takeaway
+
+Text:
+${text}`
+        );
+        setText(summaryOutput, reply);
+      } catch (e) {
+        setOutput(summaryOutput, `<p class="muted">Error: ${e.message}</p>`);
+      }
+    });
   }
 
-  output.innerHTML = `
-    <p><strong>${cfg.label} preview (simulated):</strong></p>
-    <p class="muted">This is a placeholder. Later you can wire this to a real AI backend.</p>
-    <p>Source snippet:</p>
-    <p>${escapeHtml(value.slice(0, 200))}${value.length > 200 ? "..." : ""}</p>
-  `;
+  // FLASHCARDS
+  const flashBtn = document.getElementById("flashcardsBtn");
+  const flashInput = document.getElementById("flashcardInput");
+  const flashOutput = document.getElementById("flashcardOutput");
+
+  if (flashBtn && flashInput && flashOutput) {
+    flashBtn.addEventListener("click", async () => {
+      const text = flashInput.value.trim();
+      if (!text) {
+        setOutput(flashOutput, `<p class="muted">Paste some content first.</p>`);
+        return;
+      }
+
+      setOutput(flashOutput, `<p class="muted">generating flashcards...</p>`);
+
+      try {
+        const reply = await callAI(
+          `Create 8 flashcards from the content below.
+Format exactly like:
+Q: ...
+A: ...
+
+Content:
+${text}`
+        );
+        setText(flashOutput, reply);
+      } catch (e) {
+        setOutput(flashOutput, `<p class="muted">Error: ${e.message}</p>`);
+      }
+    });
+  }
+
+  // QUIZ
+  const quizBtn = document.getElementById("quizBtn");
+  const quizInput = document.getElementById("quizInput");
+  const quizOutput = document.getElementById("quizOutput");
+
+  if (quizBtn && quizInput && quizOutput) {
+    quizBtn.addEventListener("click", async () => {
+      const text = quizInput.value.trim();
+      if (!text) {
+        setOutput(quizOutput, `<p class="muted">Paste some content first.</p>`);
+        return;
+      }
+
+      setOutput(quizOutput, `<p class="muted">creating quiz...</p>`);
+
+      try {
+        const reply = await callAI(
+          `Create a 6-question quiz based on the content below.
+Mix: multiple choice + short answer.
+At the bottom, include an Answer Key.
+
+Content:
+${text}`
+        );
+        setText(quizOutput, reply);
+      } catch (e) {
+        setOutput(quizOutput, `<p class="muted">Error: ${e.message}</p>`);
+      }
+    });
+  }
 }
 
-function escapeHtml(str) {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
+// Run after page loads
+setupStudentAI();
